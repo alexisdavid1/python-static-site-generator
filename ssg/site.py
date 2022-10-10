@@ -1,5 +1,5 @@
 from msilib.schema import Directory
-from pathlib import path
+from pathlib import Path
 
 
 class Site:
