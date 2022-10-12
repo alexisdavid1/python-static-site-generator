@@ -57,13 +57,15 @@ class Parser:
     def get_args(self, code):
         return list(
             code.find_all("call_argument").map(
-                lambda node: str(node.target) + ":" + str(node.value).replace("'", '"')
+                lambda node: str(node.target) + ":" +
+                str(node.value).replace("'", '"')
             )
         )
 
     def get_by_value(self, type, value, code=None):
         if code is None:
-            item = self.code.find_all(type, lambda node: str(node.target) == value)
+            item = self.code.find_all(
+                type, lambda node: str(node.target) == value)
         else:
             item = code.find_all(type, lambda node: str(node.target) == value)
         return SourceCode(True, item[0]) if len(item) > 0 else SourceCode(False, [])
@@ -81,7 +83,8 @@ class Parser:
     def get_from_import(self, value):
         imports = self.code.find_all(
             "from_import",
-            lambda node: "".join(list(node.value.node_list.map(lambda node: str(node))))
+            lambda node: "".join(
+                list(node.value.node_list.map(lambda node: str(node))))
             == value,
         ).find_all("name_as_name")
         return list(imports.map(lambda node: node.value))
@@ -99,7 +102,8 @@ class Parser:
 
             return flattened
 
-        items = list(dictionary.find_all("dictitem").map(lambda node: _flatten(node)))
+        items = list(dictionary.find_all(
+            "dictitem").map(lambda node: _flatten(node)))
         return [item for sublist in items for item in sublist]
 
     def get_conditional(self, values, type, nested=False):
@@ -118,7 +122,8 @@ class Parser:
         nodes = self.code.value if nested else self.code
         for value in values:
             final_node = nodes.find_all(type).find(
-                ["comparison", "unitary_operator"], lambda node: flat(node) == value
+                ["comparison", "unitary_operator"], lambda node: flat(
+                    node) == value
             )
             if final_node is not None:
                 return final_node
