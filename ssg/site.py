@@ -6,9 +6,10 @@ from conftest import Parser
 
 class Site:
 
-    def __init__(self, source, dest):
+    def __init__(self, source, dest, parsers=None):
         self.source = Path(source)
         self.dest = Path(dest)
+        self.parsers = parsers or []
 
     def create_dir(self, path):
         directory = self.dest/path.relative_to(self.source)
@@ -19,17 +20,17 @@ class Site:
         for path in self.source.rglob("*"):
             if path.is_dir():
                 return self.create_dir(path)
-            elif path is file:
+            elif path.is_file():
                 self.run_parser(path)
 
     def load_parser(self, extension):
         for parser in self.parsers:
-            if extension is Parser.valid_extension():
+            if parser.valid_extension(extension):
                 return parser
 
     def run_parser(self, path):
         parser = self.load_parser(path.suffix)
         if parser != None:
-            return Parser.parse()
+            return Parser.parse(path, self.source, self.dest)
         else:
-            NotImplemented
+            print("NotImplemented")
