@@ -1,5 +1,6 @@
 from msilib.schema import Directory
 from pathlib import Path
+import sys
 
 from conftest import Parser
 
@@ -33,4 +34,9 @@ class Site:
         if parser != None:
             return Parser.parse(path, self.source, self.dest)
         else:
-            print("NotImplemented")
+            self.error("No parser for the {} extension, file skipped!").format(
+                path.suffix)
+
+    @staticmethod
+    def error(message):
+        sys.stderr.write("\x1b[1;31m{}\n").format(message)
